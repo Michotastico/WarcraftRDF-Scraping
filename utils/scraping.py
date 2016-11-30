@@ -56,7 +56,12 @@ def parse_page(url_page):
     for row in rows:
         subject, answer = row.find_all('td')
         subject = clean_string(subject.text)
-        answer = clean_string(answer.text)
+        if subject == u'Relative(s)':
+            relatives = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
+            answer = list(map(lambda x: (BASE_URL + x['href'], x.text), relatives))
+        else:
+            answer = clean_string(answer.text)
+
         summary[subject] = answer
 
     return summary
