@@ -45,20 +45,26 @@ def parse_page(url_page):
     try:
         image = rows[1].img['data-src']
     except:
-        image = rows[2].img['data-src']
-        next_image_index += 1
+        try:
+            image = rows[1].img['src']
+        except:
+            image = rows[2].img['data-src']
+            next_image_index += 1
 
     summary['name'] = name
     summary['alias'] = alias
     summary['image'] = image
 
-    rows = rows[next_image_index:-1]
+    rows = rows[next_image_index:]
     for row in rows:
-        subject, answer = row.find_all('td')
+        row = row.find_all('td')
+        if len(row) != 2:
+            continue
+        subject, answer = row
         subject = clean_string(subject.text)
-        if subject == u'Relative(s)':
-            relatives = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
-            answer = list(map(lambda x: (BASE_URL + x['href'], x.text), relatives))
+        if subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)']:
+            people = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
+            answer = list(map(lambda x: (BASE_URL + x['href'], x.text), people))
         else:
             answer = clean_string(answer.text)
 
@@ -78,7 +84,7 @@ def get_major_characters():
     for col in columns:
         urls = col.find_all('a', href=True)
         for url in urls:
-            if url.text == u'Major characters':
+            if url.text in [u'Major characters', u'Dragon Aspects']:
                 continue
             return_list.append((base_url + url['href'], url.text))
 
