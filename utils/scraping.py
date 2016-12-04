@@ -64,6 +64,8 @@ def parse_page(url_page):
         subject = clean_string(subject.text)
         if subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)']:
             people = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
+            if len(people) < 1:
+                continue
             answer = list(map(lambda x: (BASE_URL + x['href'], x.text), people))
         else:
             answer = clean_string(answer.text)
