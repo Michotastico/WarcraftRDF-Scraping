@@ -6,6 +6,7 @@ import unicodedata
 import urllib2
 
 from bs4 import BeautifulSoup
+from bs4.element import Tag
 
 __author__ = "Michel Llorens"
 __license__ = "GPL"
@@ -27,6 +28,15 @@ def clean_string(string):
         return_string = re.sub(r"\d+", "", return_string)
     return_string = re.sub(r"\[\d*\w*\]", "", return_string)
     return_string = camel_case_split(return_string)
+    return return_string
+
+
+def clean_parenthesis(string):
+    if string is None or type(string) is Tag:
+        return ''
+    return_string = string.strip('\n').strip().replace('\n', " ")
+    return_string = unicodedata.normalize("NFKD", return_string)
+    return_string = re.sub(r"[(),]", "", return_string)
     return return_string
 
 
@@ -64,9 +74,11 @@ def parse_page(url_page):
         subject = clean_string(subject.text)
         if subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)']:
             people = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
+            people = list(filter((lambda x: x.text != u""), people))
+            people = list(filter((lambda x: x['title'] != u'WoWWiki:Citation'), people))
             if len(people) < 1:
                 continue
-            answer = list(map(lambda x: (BASE_URL + x['href'], x.text), people))
+            answer = list(map(lambda x: (BASE_URL + x['href'], x.text, clean_parenthesis(x.nextSibling)), people))
         else:
             answer = clean_string(answer.text)
 
