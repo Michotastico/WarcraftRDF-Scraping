@@ -72,15 +72,20 @@ def parse_page(url_page):
             continue
         subject, answer = row
         subject = clean_string(subject.text)
-        if subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)']:
+
+        if subject in [u'Reaction', u'See'] or len(subject) > 15:
+            continue
+        elif subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)']:
             people = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
             people = list(filter((lambda x: x.text != u""), people))
             people = list(filter((lambda x: x['title'] != u'WoWWiki:Citation'), people))
             if len(people) < 1:
                 continue
             answer = list(map(lambda x: (BASE_URL + x['href'], x.text, clean_parenthesis(x.nextSibling)), people))
+        elif subject in [u'Gender', u'Health', u'Level', u'Mana']:
+            answer = answer.text.strip()
         else:
-            answer = clean_string(answer.text)
+            answer = clean_string(answer.text).split(",")
 
         summary[subject] = answer
 
