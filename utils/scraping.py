@@ -75,13 +75,16 @@ def parse_page(url_page):
 
         if subject in [u'Reaction', u'See'] or len(subject) > 15:
             continue
-        elif subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)']:
-            people = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
-            people = list(filter((lambda x: x.text != u""), people))
-            people = list(filter((lambda x: x['title'] != u'WoWWiki:Citation'), people))
-            if len(people) < 1:
+        elif subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)', u'Affiliation']:
+            elements = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
+            elements = list(filter((lambda x: x.text != u""), elements))
+            elements = list(filter((lambda x: x['title'] != u'WoWWiki:Citation'), elements))
+            if len(elements) < 1:
                 continue
-            answer = list(map(lambda x: (BASE_URL + x['href'], x.text, clean_parenthesis(x.nextSibling)), people))
+            if subject in [u'Affiliation']:
+                answer = list(map(lambda x: (BASE_URL + x['href'], x.text), elements))
+            else:
+                answer = list(map(lambda x: (BASE_URL + x['href'], x.text, clean_parenthesis(x.nextSibling)), elements))
         elif subject in [u'Gender', u'Health', u'Level', u'Mana']:
             answer = answer.text.strip()
         else:
