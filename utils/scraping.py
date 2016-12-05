@@ -75,7 +75,7 @@ def parse_page(url_page):
 
         if subject in [u'Reaction', u'See'] or len(subject) > 15:
             continue
-        elif subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)', u'Affiliation']:
+        elif subject in [u'Relative(s)', u'Mentor(s)', u'Comp(s)', u'Student(s)', u'Affiliation', u'Race(s)', u'Race']:
             elements = list(filter((lambda x: x['href'][0] != u'#'), answer.find_all('a', href=True)))
             elements = list(filter((lambda x: x.text != u""), elements))
             elements = list(filter((lambda x: x['title'] != u'WoWWiki:Citation'), elements))
@@ -83,12 +83,17 @@ def parse_page(url_page):
                 continue
             if subject in [u'Affiliation']:
                 answer = list(map(lambda x: (BASE_URL + x['href'], x.text), elements))
+            elif subject in [u'Race(s)', u'Race']:
+                subject = u'Race'
+                answer = list(map(lambda x: (BASE_URL + x['href'], x.text), elements))
             else:
                 answer = list(map(lambda x: (BASE_URL + x['href'], x.text, clean_parenthesis(x.nextSibling)), elements))
+
         elif subject in [u'Gender', u'Health', u'Level', u'Mana']:
             answer = answer.text.strip()
         else:
             answer = clean_string(answer.text).split(",")
+            answer = (list(map(lambda x: x.strip(), answer)))
 
         summary[subject] = answer
 
