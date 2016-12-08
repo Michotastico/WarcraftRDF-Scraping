@@ -18,16 +18,73 @@ def scrap_to_rdf(url, data):
     final_insert.append(entity_string + ' foaf:isPrimaryTopicOf ' + url_string + ' .')
 
     #buscar alias y agregarlo
-    alias_string = data['alias']
-    final_insert.append(entity_string + ' foaf:nick ' + "\"" + alias_string + "\"" + ' .')
+    if data.get('alias', False):
+        alias_string = data['alias']
+        final_insert.append(entity_string + ' foaf:nick ' + "\"" + alias_string + "\"" + ' .')
 
     #buscar genero y agregarlo
-    gender_string = data['Gender']
-    final_insert.append(entity_string + ' foaf:gender ' + "\"" + gender_string + "\"" + ' .')
+    if data.get('Gender', False):
+        gender_string = data['Gender']
+        final_insert.append(entity_string + ' foaf:gender ' + "\"" + gender_string + "\"" + ' .')
 
     #buscar imagen y agregarla
-    image_string = data['image']
-    final_insert.append(entity_string + ' foaf:img ' + "<" + image_string + ">" + ' .')
+    if data.get('image', False):
+        image_string = data['image']
+        final_insert.append(entity_string + ' foaf:img ' + "<" + image_string + ">" + ' .')
+
+    #buscar mentores y agregarlos
+    if data.get('Mentor(s)', False):
+        mentors = data['Mentor(s)']
+        for mentor in mentors:
+            final_insert.append(entity_string + ' warcraft:hasMentor warcraft:' + mentor[1].replace(" ", "_") + " .")
+
+    #buscar calses y agregarlas
+    if data.get('Character class', False):
+        classes = data['Character class']
+        for cc in classes:
+            final_insert.append(entity_string + ' warcraft:Class ' + cc + ' .')
+
+    #buscar titulos y agregarlos
+    if data.get('Title', False):
+        titles = data['Title']
+        for title in titles:
+            final_insert.append(entity_string + ' warcraft:Title ' + title + ' .')
+
+    #buscar raza y agregarla
+    if data.get('Race', False):
+        races = data['Race']
+        for race in races:
+            final_insert.append(entity_string + ' warcraft:Race ' + race[1] + ' .')
+
+    #buscar afiliacion y agregarla
+    if data.get('Affiliation', False):
+        affiliations = data['Affiliation']
+        for aff in affiliations:
+            final_insert.append(entity_string + ' warcraft:AffiliatedTo ' + aff[1] + ' .')
+
+    #buscar nivel y agregarlo
+    if data.get('Level', False):
+        final_insert.append(entity_string + ' warcraft:Level ' + data['Level'] + ' .')
+
+    #buscar via y agregarla
+    if data.get('Health', False):
+        final_insert.append(entity_string + ' warcraft:Health ' + data['Health'] + ' .')
+
+    #buscar mana y agregarla
+    if data.get('Mana', False):
+        final_insert.append(entity_string + ' warcraft:Mana ' + data['Mana'] + ' .')
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
