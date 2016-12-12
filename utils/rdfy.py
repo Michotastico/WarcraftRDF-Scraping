@@ -5,6 +5,7 @@ def scrap_to_rdf(url, data):
 
 
     final_insert = list()
+    aditional_chars = list()
 
     #generar entidad  y agregarle nombre
     name_string = data['name']
@@ -38,7 +39,7 @@ def scrap_to_rdf(url, data):
         for mentor in mentors:
             final_insert.append(entity_string + ' warcraft:hasMentor warcraft:' + mentor[1].replace(" ", "_") + " .")
 
-    #buscar calses y agregarlas
+    #buscar clases y agregarlas
     if data.get('Character class', False):
         classes = data['Character class']
         for cc in classes:
@@ -92,13 +93,15 @@ def scrap_to_rdf(url, data):
     #juntando todas los triples creados
     final_insert = "\n".join(final_insert)
 
-    a = """PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+    insertion_script = """PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema>
 PREFIX warcraft: <http://www.warcraft.rdf/>
 INSERT DATA {
 %s
 }; """ % (final_insert)
-    print a
+    print insertion_script
+
+    return insertion_script, aditional_chars
 
 
 
