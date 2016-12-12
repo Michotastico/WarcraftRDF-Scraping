@@ -14,6 +14,6 @@ while to_do_chars:
 
         #TODO run insertion script
 
-        # TODO append aditional chars list to to_do_chars
+        #TODO append aditional chars list to to_do_chars
 
         done_chars[scraping_char[1]] = scraping_char[0]
