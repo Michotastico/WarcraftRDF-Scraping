@@ -127,5 +127,5 @@ INSERT DATA {
 
     return insertion_script, aditional_chars
 
-scrap_to_rdf("http://wowwiki.wikia.com/wiki/Arthas_Menethil",
-             parse_page("http://wowwiki.wikia.com/wiki/Arthas_Menethil"))
+scrap_to_rdf("http://wowwiki.wikia.com/wiki/Tyrande_Whisperwind",
+             parse_page("http://wowwiki.wikia.com/wiki/Tyrande_Whisperwind"))
