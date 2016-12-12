@@ -1,8 +1,14 @@
 from utils.scraping import *
 
 
-def remove_comillas(str):
-    return str.replace("\"", " ")
+def sanitize_query(string):
+    return string.replace("\"", " ").replace("'", " ").replace("\n", " ").strip()
+
+
+def parse_tags(tag):
+    return_tag = tag.replace(" ", "_").replace("'", "_").replace("\"", " ").replace("(", "").replace(")", "")
+    return_tag = return_tag.replace("/", "_").replace("&", "").strip()
+    return return_tag
 
 
 def scrap_to_rdf(url, data):
@@ -12,7 +18,7 @@ def scrap_to_rdf(url, data):
 
     # generar entidad  y agregarle nombre
     name_string = data['name']
-    entity_string = "warcraft:" + name_string.replace(" ", "_").replace("'", "_")
+    entity_string = "warcraft:" + parse_tags(name_string)
     name_string = "\"" + name_string + "\""
     final_insert.append(entity_string + ' foaf:name ' + name_string + " .")
     final_insert.append(entity_string + ' a warcraft:Character .')
@@ -24,12 +30,12 @@ def scrap_to_rdf(url, data):
     # buscar alias y agregarlo
     if data.get('alias', False):
         alias_string = data['alias']
-        final_insert.append(entity_string + ' foaf:nick ' + "\"" + remove_comillas(alias_string) + "\"" + ' .')
+        final_insert.append(entity_string + ' foaf:nick ' + "\"" + sanitize_query(alias_string) + "\"" + ' .')
 
     # buscar genero y agregarlo
     if data.get('Gender', False):
         gender_string = data['Gender']
-        final_insert.append(entity_string + ' foaf:gender ' + "\"" + remove_comillas(gender_string) + "\"" + ' .')
+        final_insert.append(entity_string + ' foaf:gender ' + "\"" + sanitize_query(gender_string) + "\"" + ' .')
 
     # buscar imagen y agregarla
     if data.get('image', False):
@@ -40,68 +46,68 @@ def scrap_to_rdf(url, data):
     if data.get('Character class', False):
         classes = data['Character class']
         for cc in classes:
-            final_insert.append(entity_string + ' warcraft:Class \"' + remove_comillas(cc) + '\" .')
+            final_insert.append(entity_string + ' warcraft:Class \"' + sanitize_query(cc) + '\" .')
 
     # buscar titulos y agregarlos
     if data.get('Title', False):
         titles = data['Title']
         for title in titles:
-            final_insert.append(entity_string + ' warcraft:Title \"' + remove_comillas(title) + '\" .')
+            final_insert.append(entity_string + ' warcraft:Title \"' + sanitize_query(title) + '\" .')
 
     # buscar raza y agregarla
     if data.get('Race', False):
         races = data['Race']
         for race in races:
-            final_insert.append(entity_string + ' warcraft:Race \"' + remove_comillas(race[1]) + '\" .')
+            final_insert.append(entity_string + ' warcraft:Race \"' + sanitize_query(race[1]) + '\" .')
 
     # buscar afiliacion y agregarla
     if data.get('Affiliation', False):
         affiliations = data['Affiliation']
         for aff in affiliations:
-            final_insert.append(entity_string + ' warcraft:AffiliatedTo \"' + remove_comillas(aff[1]) + '\" .')
+            final_insert.append(entity_string + ' warcraft:AffiliatedTo \"' + sanitize_query(aff[1]) + '\" .')
 
     # buscar nivel y agregarlo
     if data.get('Level', False):
-        final_insert.append(entity_string + ' warcraft:Level \"' + remove_comillas(data['Level']) + '\" .')
+        final_insert.append(entity_string + ' warcraft:Level \"' + sanitize_query(data['Level']) + '\" .')
 
     # buscar vida y agregarla
     if data.get('Health', False):
-        final_insert.append(entity_string + ' warcraft:Health \"' + remove_comillas(data['Health']) + '\" .')
+        final_insert.append(entity_string + ' warcraft:Health \"' + sanitize_query(data['Health']) + '\" .')
 
     # buscar mana y agregarla
     if data.get('Mana', False):
-        final_insert.append(entity_string + ' warcraft:Mana \"' + remove_comillas(data['Mana']) + '\" .')
+        final_insert.append(entity_string + ' warcraft:Mana \"' + sanitize_query(data['Mana']) + '\" .')
 
     # buscar alineacion y agregarla
     if data.get('Alignment', False):
         alignments = data['Alignment']
         for alignment in alignments:
-            final_insert.append(entity_string + ' warcraft:Alignment \"' + remove_comillas(alignment) + '\" .')
+            final_insert.append(entity_string + ' warcraft:Alignment \"' + sanitize_query(alignment) + '\" .')
 
     # buscar ubicaciones y agregarla
     if data.get('Location', False):
         locations = data['Location']
         for location in locations:
-            final_insert.append(entity_string + ' warcraft:LocatedIn \"' + remove_comillas(location) + '\" .')
+            final_insert.append(entity_string + ' warcraft:LocatedIn \"' + sanitize_query(location) + '\" .')
 
     # buscar posiciones y agregarla
     if data.get('Position', False):
         positions = data['Position']
         for position in positions:
-            final_insert.append(entity_string + ' warcraft:Position \"' + remove_comillas(position) + '\" .')
+            final_insert.append(entity_string + ' warcraft:Position \"' + sanitize_query(position) + '\" .')
 
     # buscar status y agregarlo
     if data.get('Status', False):
         status = data['Status']
         for s in status:
-            final_insert.append(entity_string + ' warcraft:Status \"' + remove_comillas(s) + '\" .')
+            final_insert.append(entity_string + ' warcraft:Status \"' + sanitize_query(s) + '\" .')
 
     # buscar mentores y agregarlos
     if data.get('Mentor(s)', False):
         mentors = data['Mentor(s)']
         for mentor in mentors:
             final_insert.append(entity_string +
-                                ' warcraft:hasMentor warcraft:' + mentor[1].replace(" ", "_").replace("'", "_") + " .")
+                                ' warcraft:hasMentor warcraft:' + parse_tags(mentor[1]) + " .")
             aditional_chars.append((mentor[0], mentor[1]))
 
     # buscar alumnos y agregarlos
@@ -109,7 +115,7 @@ def scrap_to_rdf(url, data):
         students = data['Student(s)']
         for student in students:
             final_insert.append(entity_string +
-                                ' warcraft:hasStudent warcraft:' + student[1].replace(" ", "_").replace("'", "_") + " .")
+                                ' warcraft:hasStudent warcraft:' + parse_tags(student[1]) + " .")
             aditional_chars.append((student[0], student[1]))
 
     # buscar companions y agregarlos
@@ -118,7 +124,7 @@ def scrap_to_rdf(url, data):
         for companion in companions:
             final_insert.append(
                 entity_string +
-                ' warcraft:hasCompanion warcraft:' + companion[1].replace(" ", "_").replace("'", "_") + " .")
+                ' warcraft:hasCompanion warcraft:' + parse_tags(companion[1]) + " .")
 
     # buscar relatives y agregarlos
     if data.get('Relative(s)', False):
@@ -126,7 +132,7 @@ def scrap_to_rdf(url, data):
         for r in relatives:
             # por ahora son todos relatives no mas, ahi vemos si agregamos los tags mas importantes
             final_insert.append(entity_string +
-                                ' warcraft:Relative warcraft:' + r[1].replace(" ", "_").replace("'", "_") + " .")
+                                ' warcraft:Relative warcraft:' + parse_tags(r[1]) + " .")
             aditional_chars.append((r[0], r[1]))
 
     # juntando todos los triples creados
