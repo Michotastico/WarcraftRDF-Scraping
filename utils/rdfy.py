@@ -131,8 +131,11 @@ def scrap_to_rdf(url, data):
         relatives = data['Relative(s)']
         for r in relatives:
             # por ahora son todos relatives no mas, ahi vemos si agregamos los tags mas importantes
+            relative_tag = parse_tags(r[1])
+            if relative_tag in [u'*']:
+                continue
             final_insert.append(entity_string +
-                                ' warcraft:Relative warcraft:' + parse_tags(r[1]) + " .")
+                                ' warcraft:Relative warcraft:' + relative_tag + " .")
             aditional_chars.append((r[0], r[1]))
 
     # juntando todos los triples creados

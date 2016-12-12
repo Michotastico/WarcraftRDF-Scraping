@@ -45,7 +45,7 @@ def parse_page(url_page):
     page = urllib2.urlopen(url_page)
     entity = BeautifulSoup(page, 'html.parser')
     name = entity.h1.text
-    summary['name'] = name
+    summary['name'] = name.replace("\n", "").strip()
     try:
         entity_summary = entity.find('table', {'class':'darktable'})
 
