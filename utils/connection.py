@@ -8,10 +8,10 @@ __license__ = "GPL"
 __version__ = "1.0.0"
 __email__ = "mllorens@dcc.uchile.cl"
 
-UPDATE_URL = "http://10.0.115.96:3030/Warcraft/update"
+UPDATE_URL = "http://127.0.0.1:3030/Warcraft/update"
 update_sparql = SPARQLWrapper(UPDATE_URL)
 
-QUERY_URL = "http://10.0.115.96:3030/Warcraft/query"
+QUERY_URL = "http://127.0.0.1:3030/Warcraft/query"
 query_sparql = SPARQLWrapper(QUERY_URL)
 
 
