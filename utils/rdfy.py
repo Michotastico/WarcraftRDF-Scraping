@@ -1,6 +1,3 @@
-from utils.scraping import *
-
-
 def sanitize_query(string):
     return string.replace("\"", " ").replace("'", " ").replace("\n", " ").strip()
 
@@ -16,93 +13,93 @@ def scrap_to_rdf(url, data):
     final_insert = list()
     aditional_chars = list()
 
-    # generar entidad  y agregarle nombre
+    # Generation of entity and addition of name
     name_string = data['name']
     entity_string = "warcraft:" + parse_tags(name_string)
     name_string = "\"" + name_string + "\""
     final_insert.append(entity_string + ' foaf:name ' + name_string + " .")
     final_insert.append(entity_string + ' a warcraft:Character .')
 
-    # buscar url y agregarlo
+    # Search URL and append it
     url_string = "<" + url + ">"
     final_insert.append(entity_string + ' foaf:isPrimaryTopicOf ' + url_string + ' .')
 
-    # buscar alias y agregarlo
+    # Search nick and append it
     if data.get('alias', False):
         alias_string = data['alias']
         final_insert.append(entity_string + ' foaf:nick ' + "\"" + sanitize_query(alias_string) + "\"" + ' .')
 
-    # buscar genero y agregarlo
+    # Search gender and append it
     if data.get('Gender', False):
         gender_string = data['Gender']
         final_insert.append(entity_string + ' foaf:gender ' + "\"" + sanitize_query(gender_string) + "\"" + ' .')
 
-    # buscar imagen y agregarla
+    # Search image and append it
     if data.get('image', False):
         image_string = data['image']
         final_insert.append(entity_string + ' foaf:img ' + "<" + image_string + ">" + ' .')
 
-    # buscar clases y agregarlas
+    # Search classes and append it
     if data.get('Character class', False):
         classes = data['Character class']
         for cc in classes:
             final_insert.append(entity_string + ' warcraft:Class \"' + sanitize_query(cc) + '\" .')
 
-    # buscar titulos y agregarlos
+    # Search titles and append it
     if data.get('Title', False):
         titles = data['Title']
         for title in titles:
             final_insert.append(entity_string + ' warcraft:Title \"' + sanitize_query(title) + '\" .')
 
-    # buscar raza y agregarla
+    # Search races and append it
     if data.get('Race', False):
         races = data['Race']
         for race in races:
             final_insert.append(entity_string + ' warcraft:Race \"' + sanitize_query(race[1]) + '\" .')
 
-    # buscar afiliacion y agregarla
+    # Search affiliation and append it
     if data.get('Affiliation', False):
         affiliations = data['Affiliation']
         for aff in affiliations:
             final_insert.append(entity_string + ' warcraft:AffiliatedTo \"' + sanitize_query(aff[1]) + '\" .')
 
-    # buscar nivel y agregarlo
+    # Search level and append it
     if data.get('Level', False):
         final_insert.append(entity_string + ' warcraft:Level \"' + sanitize_query(data['Level']) + '\" .')
 
-    # buscar vida y agregarla
+    # Search health and append it
     if data.get('Health', False):
         final_insert.append(entity_string + ' warcraft:Health \"' + sanitize_query(data['Health']) + '\" .')
 
-    # buscar mana y agregarla
+    # Search mana and append it
     if data.get('Mana', False):
         final_insert.append(entity_string + ' warcraft:Mana \"' + sanitize_query(data['Mana']) + '\" .')
 
-    # buscar alineacion y agregarla
+    # Search alignment and append it
     if data.get('Alignment', False):
         alignments = data['Alignment']
         for alignment in alignments:
             final_insert.append(entity_string + ' warcraft:Alignment \"' + sanitize_query(alignment) + '\" .')
 
-    # buscar ubicaciones y agregarla
+    # Search locations and append it
     if data.get('Location', False):
         locations = data['Location']
         for location in locations:
             final_insert.append(entity_string + ' warcraft:LocatedIn \"' + sanitize_query(location) + '\" .')
 
-    # buscar posiciones y agregarla
+    # Search positions and append it
     if data.get('Position', False):
         positions = data['Position']
         for position in positions:
             final_insert.append(entity_string + ' warcraft:Position \"' + sanitize_query(position) + '\" .')
 
-    # buscar status y agregarlo
+    # Search status and append it
     if data.get('Status', False):
         status = data['Status']
         for s in status:
             final_insert.append(entity_string + ' warcraft:Status \"' + sanitize_query(s) + '\" .')
 
-    # buscar mentores y agregarlos
+    # Search mentors and append it
     if data.get('Mentor(s)', False):
         mentors = data['Mentor(s)']
         for mentor in mentors:
@@ -110,7 +107,7 @@ def scrap_to_rdf(url, data):
                                 ' warcraft:hasMentor warcraft:' + parse_tags(mentor[1]) + " .")
             aditional_chars.append((mentor[0], mentor[1]))
 
-    # buscar alumnos y agregarlos
+    # Search students and append it
     if data.get('Student(s)', False):
         students = data['Student(s)']
         for student in students:
@@ -118,7 +115,7 @@ def scrap_to_rdf(url, data):
                                 ' warcraft:hasStudent warcraft:' + parse_tags(student[1]) + " .")
             aditional_chars.append((student[0], student[1]))
 
-    # buscar companions y agregarlos
+    # Search companions and append it
     if data.get('Comp(s)', False):
         companions = data['Comp(s)']
         for companion in companions:
@@ -126,7 +123,7 @@ def scrap_to_rdf(url, data):
                 entity_string +
                 ' warcraft:hasCompanion warcraft:' + parse_tags(companion[1]) + " .")
 
-    # buscar relatives y agregarlos
+    # Search relatives and append it
     if data.get('Relative(s)', False):
         relatives = data['Relative(s)']
         for r in relatives:
@@ -138,7 +135,7 @@ def scrap_to_rdf(url, data):
                                 ' warcraft:Relative warcraft:' + relative_tag + " .")
             aditional_chars.append((r[0], r[1]))
 
-    # juntando todos los triples creados
+    # Join everything on one string and insert on query
     final_insert = "\n".join(final_insert)
 
     insertion_script = """PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
@@ -148,9 +145,4 @@ INSERT DATA {
 %s
 }; """ % final_insert
 
-    #print insertion_script
-
     return insertion_script, aditional_chars
-
-#s = "http://wowwiki.wikia.com/wiki/Archimonde"
-#scrap_to_rdf(s, parse_page(s))
