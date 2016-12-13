@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from utils.scraping import *
 from utils.rdfy import *
 from utils.connection import *
 
+"""Get the major characters, generate the queries and send it to the server.
+After that append new characters to parse (usually minor characters)."""
 to_do_chars = get_major_characters()
 done_chars = {}
 already_counter = 0

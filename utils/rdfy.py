@@ -1,15 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+__author__ = "Tomas Saez"
+__license__ = "GPL"
+__version__ = "1.0.0"
+
+
 def sanitize_query(string):
+    """Return a sanitized string."""
     return string.replace("\"", " ").replace("'", " ").replace("\n", " ").strip()
 
 
 def parse_tags(tag):
+    """Return a string without specials chars who broke the string format."""
     return_tag = tag.replace(" ", "_").replace("'", "_").replace("\"", " ").replace("(", "").replace(")", "")
     return_tag = return_tag.replace("/", "_").replace("&", "").strip()
     return return_tag
 
 
 def scrap_to_rdf(url, data):
-
+    """Parse the data and return a string with a SPARQL update query."""
     final_insert = list()
     aditional_chars = list()
 

@@ -17,11 +17,13 @@ BASE_URL = 'http://wowwiki.wikia.com'
 
 
 def camel_case_split(identifier):
+    """Return a parsed string on camelcase case."""
     matches = re.finditer('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)', identifier)
     return " ".join([m.group(0) for m in matches])
 
 
 def clean_string(string):
+    """Return a string cleaned of specials chars of the wiki."""
     return_string = string.strip('\n').strip().replace('\n', " ")
     return_string = unicodedata.normalize("NFKD", return_string)
     if re.search(r"\d+,\d+,\d*", return_string) is None:
@@ -32,6 +34,7 @@ def clean_string(string):
 
 
 def clean_parenthesis(string):
+    """Return a string cleaned of parenthesis."""
     if string is None or type(string) is Tag:
         return ''
     return_string = string.strip('\n').strip().replace('\n', " ")
@@ -41,6 +44,7 @@ def clean_parenthesis(string):
 
 
 def parse_page(url_page):
+    """Get and parse a wiki page and return a dictionary with the character data."""
     summary = dict()
     page = urllib2.urlopen(url_page)
     entity = BeautifulSoup(page, 'html.parser')
@@ -102,6 +106,7 @@ def parse_page(url_page):
 
 
 def get_major_characters():
+    """Parse a wiki page with multiple urls and return a list of tuples with URLS and names."""
     base_url = BASE_URL
     page = urllib2.urlopen("http://wowwiki.wikia.com/wiki/Category:Major_characters")
     entity = BeautifulSoup(page, 'html.parser')

@@ -16,6 +16,7 @@ query_sparql = SPARQLWrapper(QUERY_URL)
 
 
 def update_sparql_server(data):
+    """Send a update request."""
     update_sparql.resetQuery()
     update_sparql.method = 'POST'
     update_sparql.setQuery(data)
@@ -23,6 +24,7 @@ def update_sparql_server(data):
 
 
 def query_sparql_server(query):
+    """Send a query request and return a JSON result."""
     query_sparql.resetQuery()
     query_sparql.setQuery(query)
     query_sparql.setReturnFormat(JSON)
